@@ -91,4 +91,3 @@ void Poller::updateChannel(Channel* channel)
     }
   }
 }
-

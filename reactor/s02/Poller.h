@@ -43,6 +43,8 @@ class Poller : boost::noncopyable
 
   void assertInLoopThread() { ownerLoop_->assertInLoopThread(); }
 
+  const std::string toString() const;
+
  private:
   void fillActiveChannels(int numEvents,
                           ChannelList* activeChannels) const;
