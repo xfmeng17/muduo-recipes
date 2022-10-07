@@ -44,7 +44,7 @@ EventLoop::EventLoop()
     wakeupFd_(createEventfd()),
     wakeupChannel_(new Channel(this, wakeupFd_))
 {
-  LOG_TRACE << "EventLoop created " << this << " in thread " << threadId_;
+  LOG_INFO << "EventLoop() begin " << this << " in thread " << threadId_;
   if (t_loopInThisThread)
   {
     LOG_FATAL << "Another EventLoop " << t_loopInThisThread
@@ -58,13 +58,17 @@ EventLoop::EventLoop()
       boost::bind(&EventLoop::handleRead, this));
   // we are always reading the wakeupfd
   wakeupChannel_->enableReading();
+
+  LOG_INFO << "EventLoop() end " << this << " in thread " << threadId_;
 }
 
 EventLoop::~EventLoop()
 {
+  LOG_INFO << "~EventLoop() begin...";
   assert(!looping_);
   ::close(wakeupFd_);
   t_loopInThisThread = NULL;
+  LOG_INFO << "~EventLoop() end...";
 }
 
 void EventLoop::loop()
@@ -74,8 +78,10 @@ void EventLoop::loop()
   looping_ = true;
   quit_ = false;
 
+  LOG_INFO << "EventLoop::loop " << this << " start looping";
   while (!quit_)
   {
+    LOG_INFO << "EventLoop::loop " << this << " IN loopping quit_=" << quit_;
     activeChannels_.clear();
     pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
     for (ChannelList::iterator it = activeChannels_.begin();
@@ -85,28 +91,32 @@ void EventLoop::loop()
     }
     doPendingFunctors();
   }
-
-  LOG_TRACE << "EventLoop " << this << " stop looping";
+  LOG_INFO << "EventLoop::loop " << this << " stop looping";
   looping_ = false;
 }
 
 void EventLoop::quit()
 {
   quit_ = true;
+  LOG_INFO << "EventLoop::quit after quit_=true";
   if (!isInLoopThread())
   {
+    LOG_INFO << "EventLoop::quit quit_ is set to true and do `wakeup`";
     wakeup();
   }
+  LOG_INFO << "EventLoop::quit end...";
 }
 
 void EventLoop::runInLoop(const Functor& cb)
 {
   if (isInLoopThread())
   {
+    LOG_INFO << "is in loop thread, do call_back direct";
     cb();
   }
   else
   {
+    LOG_INFO << "no in loop thread, do queue in loop";
     queueInLoop(cb);
   }
 }
@@ -120,6 +130,7 @@ void EventLoop::queueInLoop(const Functor& cb)
 
   if (!isInLoopThread() || callingPendingFunctors_)
   {
+    LOG_INFO << "queue in loop wakeup!!";
     wakeup();
   }
 }
@@ -162,7 +173,10 @@ void EventLoop::wakeup()
   if (n != sizeof one)
   {
     LOG_ERROR << "EventLoop::wakeup() writes " << n << " bytes instead of 8";
+    LOG_ERROR << "t_loopInThisThread=" << t_loopInThisThread;
+    LOG_ERROR << "errno=" << errno << " errmsg=" << strerror( errno ); 
   }
+  LOG_INFO << "after wakeup n=" << n << " wakeupFd_=" << wakeupFd_;
 }
 
 void EventLoop::handleRead()

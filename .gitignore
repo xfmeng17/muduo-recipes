@@ -4,3 +4,5 @@
 *.out
 profile*.pb.gz
 core
+.vscode
+

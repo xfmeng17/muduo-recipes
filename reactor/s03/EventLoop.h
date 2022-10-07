@@ -14,6 +14,8 @@
 #include "Callbacks.h"
 #include "TimerId.h"
 
+#include "logging/Logging.h"
+
 #include <boost/scoped_ptr.hpp>
 #include <vector>
 

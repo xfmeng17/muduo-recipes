@@ -9,6 +9,8 @@
 
 #include "EventLoop.h"
 
+#include "logging/Logging.h"
+
 #include <boost/bind.hpp>
 
 using namespace muduo;
@@ -20,20 +22,23 @@ EventLoopThread::EventLoopThread()
     mutex_(),
     cond_(mutex_)
 {
+  LOG_INFO << "EventLoopThread() begin and end...";
 }
 
 EventLoopThread::~EventLoopThread()
 {
+  LOG_INFO << "~EventLoopThread() begin...";
   exiting_ = true;
   loop_->quit();
   thread_.join();
+  LOG_INFO << "~EventLoopThread() end...";
 }
 
 EventLoop* EventLoopThread::startLoop()
 {
   assert(!thread_.started());
   thread_.start();
-
+  LOG_INFO << "EventLoopThread::startLoop [after] thread_.start()";
   {
     MutexLockGuard lock(mutex_);
     while (loop_ == NULL)
@@ -41,12 +46,13 @@ EventLoop* EventLoopThread::startLoop()
       cond_.wait();
     }
   }
-
+  LOG_INFO << "EventLoopThread::startLoop() wakeup from cond and return loop_";
   return loop_;
 }
 
 void EventLoopThread::threadFunc()
 {
+  LOG_INFO << "EventLoopThread::threadFunc begin...";
   EventLoop loop;
 
   {
@@ -55,7 +61,9 @@ void EventLoopThread::threadFunc()
     cond_.notify();
   }
 
+  LOG_INFO << "EventLoopThread::threadFunc [before] loop.loop()";
   loop.loop();
+
+  LOG_INFO << "EventLoopThread::threadFunc end... exiting_=" << exiting_;
   //assert(exiting_);
 }
-
