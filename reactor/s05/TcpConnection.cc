@@ -32,7 +32,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
     localAddr_(localAddr),
     peerAddr_(peerAddr)
 {
-  LOG_DEBUG << "TcpConnection::ctor[" <<  name_ << "] at " << this
+  LOG_INFO << "TcpConnection::ctor[" <<  name_ << "] at " << this
             << " fd=" << sockfd;
   channel_->setReadCallback(
       boost::bind(&TcpConnection::handleRead, this));
@@ -40,7 +40,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
 
 TcpConnection::~TcpConnection()
 {
-  LOG_DEBUG << "TcpConnection::dtor[" <<  name_ << "] at " << this
+  LOG_INFO << "TcpConnection::dtor[" <<  name_ << "] at " << this
             << " fd=" << channel_->fd();
 }
 
