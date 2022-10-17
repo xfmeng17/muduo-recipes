@@ -43,7 +43,7 @@ void onMessage(const muduo::TcpConnectionPtr& conn,
 
 int main(int argc, char* argv[])
 {
-  printf("main(): pid = %d\n", getpid());
+  printf("main(): pid = %d, tid = %d\n", getpid(), muduo::CurrentThread::tid());
 
   std::string line;
   for (int i = 33; i < 127; ++i)

@@ -17,6 +17,8 @@
 #include <assert.h>
 //#include <unistd.h>  // ssize_t
 
+#include "logging/Logging.h"
+
 namespace muduo
 {
 
@@ -117,6 +119,7 @@ class Buffer : public muduo::copyable
   {
     if (writableBytes() < len)
     {
+      LOG_INFO << "writableBytes=" << writableBytes() << ", len=" << len;
       makeSpace(len);
     }
     assert(writableBytes() >= len);
@@ -164,11 +167,13 @@ class Buffer : public muduo::copyable
   {
     if (writableBytes() + prependableBytes() < len + kCheapPrepend)
     {
+      LOG_INFO << "no space, resize to writerIndex_=" << writerIndex_ << " + len=" << len;
       buffer_.resize(writerIndex_+len);
     }
     else
     {
       // move readable data to the front, make space inside buffer
+      LOG_INFO << "move readable data to the front, make space inside buffer";
       assert(kCheapPrepend < readerIndex_);
       size_t readable = readableBytes();
       std::copy(begin()+readerIndex_,

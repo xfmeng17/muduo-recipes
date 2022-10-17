@@ -53,6 +53,8 @@ int main(int argc, char* argv[])
   message2.resize(len2);
   std::fill(message1.begin(), message1.end(), 'A');
   std::fill(message2.begin(), message2.end(), 'B');
+  message1.append("@@@len1=" +std::to_string(len1));
+  message2.append("@@@len2=" +std::to_string(len2));
 
   muduo::InetAddress listenAddr(9981);
   muduo::EventLoop loop;

@@ -20,6 +20,7 @@ ssize_t Buffer::readFd(int fd, int* savedErrno)
   char extrabuf[65536];
   struct iovec vec[2];
   const size_t writable = writableBytes();
+  LOG_INFO << "writable=" << writable;
   vec[0].iov_base = begin()+writerIndex_;
   vec[0].iov_len = writable;
   vec[1].iov_base = extrabuf;
@@ -33,6 +34,7 @@ ssize_t Buffer::readFd(int fd, int* savedErrno)
     writerIndex_ = buffer_.size();
     append(extrabuf, n - writable);
   }
+  LOG_INFO << "buffer read fd with n=" << n;
   return n;
 }
 

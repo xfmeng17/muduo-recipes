@@ -26,6 +26,16 @@ void onMessage(const muduo::TcpConnectionPtr& conn,
          len, conn->name().c_str());
 }
 
+void onMessage2(const muduo::TcpConnectionPtr& conn,
+                moduo::Buffer* buf,
+                muduo::Timestamp receiveTime)
+{
+   printf("onMessage2(): received %zd bytes from connection [%s]\n",
+          buff->readableBytes(),
+          conn->name().c_str(),
+          receiveTime.toFormattedString().c_str());
+}
+
 int main()
 {
   printf("main(): pid = %d\n", getpid());
@@ -35,7 +45,8 @@ int main()
 
   muduo::TcpServer server(&loop, listenAddr);
   server.setConnectionCallback(onConnection);
-  server.setMessageCallback(onMessage);
+  // server.setMessageCallback(onMessage);
+  server.setMessageCallback(onMessage2);
   server.start();
 
   loop.loop();

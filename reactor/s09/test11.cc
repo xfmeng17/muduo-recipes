@@ -4,9 +4,11 @@
 #include <stdio.h>
 
 std::string message;
+size_t send_cnt;
 
 void onConnection(const muduo::TcpConnectionPtr& conn)
 {
+  message = std::to_string(send_cnt++) + "\n";
   if (conn->connected())
   {
     printf("onConnection(): new connection [%s] from %s\n",
@@ -23,6 +25,7 @@ void onConnection(const muduo::TcpConnectionPtr& conn)
 
 void onWriteComplete(const muduo::TcpConnectionPtr& conn)
 {
+  message = std::to_string(send_cnt++) + "\n";
   conn->send(message);
 }
 
@@ -53,6 +56,9 @@ int main()
   {
     message += line.substr(i, 72) + '\n';
   }
+
+  message = "";
+  send_cnt = 0;
 
   muduo::InetAddress listenAddr(9981);
   muduo::EventLoop loop;
