@@ -56,7 +56,7 @@ EventLoop::EventLoop()
     wakeupFd_(createEventfd()),
     wakeupChannel_(new Channel(this, wakeupFd_))
 {
-  LOG_TRACE << "EventLoop created " << this << " in thread " << threadId_;
+  LOG_DEBUG << "EventLoop created " << this << " in thread " << threadId_;
   if (t_loopInThisThread)
   {
     LOG_FATAL << "Another EventLoop " << t_loopInThisThread
@@ -98,7 +98,7 @@ void EventLoop::loop()
     doPendingFunctors();
   }
 
-  LOG_TRACE << "EventLoop " << this << " stop looping";
+  LOG_DEBUG << "EventLoop " << this << " stop looping";
   looping_ = false;
 }
 

@@ -61,7 +61,7 @@ Timestamp EPoller::poll(int timeoutMs, ChannelList* activeChannels)
   Timestamp now(Timestamp::now());
   if (numEvents > 0)
   {
-    LOG_TRACE << numEvents << " events happended";
+    LOG_DEBUG << numEvents << " events happended";
     fillActiveChannels(numEvents, activeChannels);
     if (implicit_cast<size_t>(numEvents) == events_.size())
     {
@@ -70,7 +70,7 @@ Timestamp EPoller::poll(int timeoutMs, ChannelList* activeChannels)
   }
   else if (numEvents == 0)
   {
-    LOG_TRACE << " nothing happended";
+    LOG_DEBUG << " nothing happended";
   }
   else
   {
@@ -100,7 +100,7 @@ void EPoller::fillActiveChannels(int numEvents,
 void EPoller::updateChannel(Channel* channel)
 {
   assertInLoopThread();
-  LOG_TRACE << "fd = " << channel->fd() << " events = " << channel->events();
+  LOG_DEBUG << "fd = " << channel->fd() << " events = " << channel->events();
   const int index = channel->index();
   if (index == kNew || index == kDeleted)
   {
@@ -143,7 +143,7 @@ void EPoller::removeChannel(Channel* channel)
 {
   assertInLoopThread();
   int fd = channel->fd();
-  LOG_TRACE << "fd = " << fd;
+  LOG_DEBUG << "fd = " << fd;
   assert(channels_.find(fd) != channels_.end());
   assert(channels_[fd] == channel);
   assert(channel->isNoneEvent());

@@ -54,7 +54,7 @@ void readTimerfd(int timerfd, Timestamp now)
 {
   uint64_t howmany;
   ssize_t n = ::read(timerfd, &howmany, sizeof howmany);
-  LOG_TRACE << "TimerQueue::handleRead() " << howmany << " at " << now.toString();
+  LOG_DEBUG << "TimerQueue::handleRead() " << howmany << " at " << now.toString();
   if (n != sizeof howmany)
   {
     LOG_ERROR << "TimerQueue::handleRead() reads " << n << " bytes instead of 8";

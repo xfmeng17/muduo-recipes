@@ -146,7 +146,7 @@ void Connector::resetChannel()
 
 void Connector::handleWrite()
 {
-  LOG_TRACE << "Connector::handleWrite " << state_;
+  LOG_DEBUG << "Connector::handleWrite " << state_;
 
   if (state_ == kConnecting)
   {
@@ -190,7 +190,7 @@ void Connector::handleError()
 
   int sockfd = removeAndResetChannel();
   int err = sockets::getSocketError(sockfd);
-  LOG_TRACE << "SO_ERROR = " << err << " " << strerror_tl(err);
+  LOG_DEBUG << "SO_ERROR = " << err << " " << strerror_tl(err);
   retry(sockfd);
 }
 

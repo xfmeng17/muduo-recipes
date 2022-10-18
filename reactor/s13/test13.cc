@@ -1,4 +1,6 @@
 #include "EventLoop.h"
+#include "EventLoopThread.h"
+#include "TcpConnection.h"
 #include "InetAddress.h"
 #include "TcpClient.h"
 
@@ -11,7 +13,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-std::string message = "Hello\n";
+std::string message = "s13_test13_tcpclient_on_connection_send_msg\n";
 
 void onConnection(const muduo::TcpConnectionPtr& conn)
 {
@@ -41,16 +43,44 @@ void onMessage(const muduo::TcpConnectionPtr& conn,
   printf("onMessage(): [%s]\n", buf->retrieveAsString().c_str());
 }
 
-int main()
-{
-  muduo::EventLoop loop;
-  muduo::InetAddress serverAddr("localhost", 9981);
-  muduo::TcpClient client(&loop, serverAddr);
+// int main()
+// {
+//   muduo::EventLoop loop;
+//   muduo::InetAddress serverAddr("localhost", 9981);
+//   muduo::TcpClient client(&loop, serverAddr);
 
+//   client.setConnectionCallback(onConnection);
+//   client.setMessageCallback(onMessage);
+//   client.enableRetry();
+//   client.connect();
+//   loop.loop();
+// }
+
+int main() {
+  muduo::EventLoopThread loopThread;
+  muduo::EventLoop* loop = loopThread.startLoop();
+
+  muduo::InetAddress serverAddr("localhost", 9981);
+  muduo::TcpClient client(loop, serverAddr);
   client.setConnectionCallback(onConnection);
   client.setMessageCallback(onMessage);
   client.enableRetry();
   client.connect();
-  loop.loop();
-}
 
+  sleep(1);
+
+  LOG_INFO << "EventLoop ptr=" << loop << " client.connection.getLoop=" << client.connection()->getLoop();
+  LOG_INFO << "connect ok, then try send message";
+  // return 0;
+
+  for (int i = 10; i < 20; i++) {
+    muduo::TcpConnectionPtr conn = client.connection();
+    std::string msg = "test13.client with i is " + std::to_string(i);
+    LOG_INFO << msg;
+    conn->send(msg);
+    sleep(1);
+  }
+
+  sleep(1000);
+  return 0;
+}

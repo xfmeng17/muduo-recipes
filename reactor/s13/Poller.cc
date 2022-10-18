@@ -30,10 +30,10 @@ Timestamp Poller::poll(int timeoutMs, ChannelList* activeChannels)
   int numEvents = ::poll(&*pollfds_.begin(), pollfds_.size(), timeoutMs);
   Timestamp now(Timestamp::now());
   if (numEvents > 0) {
-    LOG_TRACE << numEvents << " events happended";
+    LOG_DEBUG << numEvents << " events happended";
     fillActiveChannels(numEvents, activeChannels);
   } else if (numEvents == 0) {
-    LOG_TRACE << " nothing happended";
+    LOG_DEBUG << " nothing happended";
   } else {
     LOG_SYSERR << "Poller::poll()";
   }
@@ -63,7 +63,7 @@ void Poller::fillActiveChannels(int numEvents,
 void Poller::updateChannel(Channel* channel)
 {
   assertInLoopThread();
-  LOG_TRACE << "fd = " << channel->fd() << " events = " << channel->events();
+  LOG_DEBUG << "fd = " << channel->fd() << " events = " << channel->events();
   if (channel->index() < 0) {
     // a new one, add to pollfds_
     assert(channels_.find(channel->fd()) == channels_.end());
@@ -95,7 +95,7 @@ void Poller::updateChannel(Channel* channel)
 void Poller::removeChannel(Channel* channel)
 {
   assertInLoopThread();
-  LOG_TRACE << "fd = " << channel->fd();
+  LOG_DEBUG << "fd = " << channel->fd();
   assert(channels_.find(channel->fd()) != channels_.end());
   assert(channels_[channel->fd()] == channel);
   assert(channel->isNoneEvent());

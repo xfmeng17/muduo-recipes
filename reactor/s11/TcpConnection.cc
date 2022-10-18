@@ -33,7 +33,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
     localAddr_(localAddr),
     peerAddr_(peerAddr)
 {
-  LOG_DEBUG << "TcpConnection::ctor[" <<  name_ << "] at " << this
+  LOG_INFO << "TcpConnection::ctor[" <<  name_ << "] at " << this
             << " fd=" << sockfd;
   channel_->setReadCallback(
       boost::bind(&TcpConnection::handleRead, this, _1));
@@ -47,7 +47,7 @@ TcpConnection::TcpConnection(EventLoop* loop,
 
 TcpConnection::~TcpConnection()
 {
-  LOG_DEBUG << "TcpConnection::dtor[" <<  name_ << "] at " << this
+  LOG_INFO << "TcpConnection::dtor[" <<  name_ << "] at " << this
             << " fd=" << channel_->fd();
 }
 
@@ -72,7 +72,7 @@ void TcpConnection::sendInLoop(const std::string& message)
     nwrote = ::write(channel_->fd(), message.data(), message.size());
     if (nwrote >= 0) {
       if (implicit_cast<size_t>(nwrote) < message.size()) {
-        LOG_TRACE << "I am going to write more data";
+        LOG_INFO << "I am going to write more data";
       } else if (writeCompleteCallback_) {
         loop_->queueInLoop(
             boost::bind(writeCompleteCallback_, shared_from_this()));
@@ -174,20 +174,20 @@ void TcpConnection::handleWrite()
           shutdownInLoop();
         }
       } else {
-        LOG_TRACE << "I am going to write more data";
+        LOG_INFO << "I am going to write more data";
       }
     } else {
       LOG_SYSERR << "TcpConnection::handleWrite";
     }
   } else {
-    LOG_TRACE << "Connection is down, no more writing";
+    LOG_INFO << "Connection is down, no more writing";
   }
 }
 
 void TcpConnection::handleClose()
 {
   loop_->assertInLoopThread();
-  LOG_TRACE << "TcpConnection::handleClose state = " << state_;
+  LOG_INFO << "TcpConnection::handleClose state = " << state_;
   assert(state_ == kConnected || state_ == kDisconnecting);
   // we don't close fd, leave it to dtor, so we can find leaks easily.
   channel_->disableAll();

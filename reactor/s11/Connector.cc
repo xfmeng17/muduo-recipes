@@ -28,12 +28,12 @@ Connector::Connector(EventLoop* loop, const InetAddress& serverAddr)
     state_(kDisconnected),
     retryDelayMs_(kInitRetryDelayMs)
 {
-  LOG_DEBUG << "ctor[" << this << "]";
+  LOG_INFO << "ctor[" << this << "]";
 }
 
 Connector::~Connector()
 {
-  LOG_DEBUG << "dtor[" << this << "]";
+  LOG_INFO << "dtor[" << this << "]";
   loop_->cancel(timerId_);
   assert(!channel_);
 }
@@ -54,7 +54,7 @@ void Connector::startInLoop()
   }
   else
   {
-    LOG_DEBUG << "do not connect";
+    LOG_INFO << "do not connect";
   }
 }
 
@@ -146,7 +146,7 @@ void Connector::resetChannel()
 
 void Connector::handleWrite()
 {
-  LOG_TRACE << "Connector::handleWrite " << state_;
+  LOG_INFO << "Connector::handleWrite " << state_;
 
   if (state_ == kConnecting)
   {
@@ -190,7 +190,7 @@ void Connector::handleError()
 
   int sockfd = removeAndResetChannel();
   int err = sockets::getSocketError(sockfd);
-  LOG_TRACE << "SO_ERROR = " << err << " " << strerror_tl(err);
+  LOG_INFO << "SO_ERROR = " << err << " " << strerror_tl(err);
   retry(sockfd);
 }
 
@@ -209,7 +209,7 @@ void Connector::retry(int sockfd)
   }
   else
   {
-    LOG_DEBUG << "do not connect";
+    LOG_INFO << "do not connect";
   }
 }
 

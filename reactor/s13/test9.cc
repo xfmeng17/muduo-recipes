@@ -29,8 +29,8 @@ void onMessage(const muduo::TcpConnectionPtr& conn,
          buf->readableBytes(),
          conn->name().c_str(),
          receiveTime.toFormattedString().c_str());
-
-  conn->send(buf->retrieveAsString());
+  std::string reture_msg = "From s13/test9 EchoServer: " + buf->retrieveAsString();
+  conn->send(reture_msg);
 }
 
 int main(int argc, char* argv[])
